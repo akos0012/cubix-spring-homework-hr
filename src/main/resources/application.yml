@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: hr
+  profiles:
+    active: prod
+
+hr:
+  salary:
+    smart:
+      limit1: 10
+      raise1: 10
+      limit2: 5
+      raise2: 5
+      limit3: 2.5
+      raise3: 2
