@@ -9,6 +9,7 @@ import hu.cubix.hr.akos0012.config.HrConfigurationProperties.Salary.Smart;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.List;
 
 @Service
 public class SmartEmployeeService implements EmployeeService {
@@ -35,17 +36,13 @@ public class SmartEmployeeService implements EmployeeService {
         Smart smartConfig = config.getSalary().getSmart();
         double yearsAtJob = getYearsAtJob(employee);
 
-        float limit1 = smartConfig.getLimit1();
-        float limit2 = smartConfig.getLimit2();
-        float limit3 = smartConfig.getLimit3();
+        List<Float> limits = smartConfig.getLimits();
+        List<Integer> raises = smartConfig.getRaises();
 
-        int raise1 = smartConfig.getRaise1();
-        int raise2 = smartConfig.getRaise2();
-        int raise3 = smartConfig.getRaise3();
+        for (int i = 0; i < limits.size(); i++) {
+            if (yearsAtJob >= limits.get(i)) return raises.get(i);
+        }
 
-        if (yearsAtJob >= limit1) return raise1;
-        if (yearsAtJob >= limit2) return raise2;
-        if (yearsAtJob >= limit3) return raise3;
         return 0;
     }
 
