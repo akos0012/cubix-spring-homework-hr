@@ -5,11 +5,14 @@ import hu.cubix.hr.akos0012.model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import hu.cubix.hr.akos0012.config.HrConfigurationProperties.Salary.Smart;
+import hu.cubix.hr.akos0012.config.HrConfigurationProperties.Smart;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.TreeMap;
 
 @Service
 public class SmartEmployeeService implements EmployeeService {
@@ -36,19 +39,39 @@ public class SmartEmployeeService implements EmployeeService {
         Smart smartConfig = config.getSalary().getSmart();
         double yearsAtJob = getYearsAtJob(employee);
 
-        List<Float> limits = smartConfig.getLimits();
-        List<Integer> raises = smartConfig.getRaises();
+//        List<Float> limits = smartConfig.getLimits();
+//        List<Integer> raises = smartConfig.getRaises();
+//
+//        for (int i = 0; i < limits.size(); i++) {
+//            if (yearsAtJob >= limits.get(i)) return raises.get(i);
+//        }
 
-        for (int i = 0; i < limits.size(); i++) {
-            if (yearsAtJob >= limits.get(i)) return raises.get(i);
-        }
 
-        return 0;
+        TreeMap<Double, Integer> limits = smartConfig.getLimits();
+
+        //1. megoldás
+//        Integer maxPercent = null;
+//        for (Entry<Double, Integer> entry : limits.entrySet()) {
+//            if (yearsAtJob >= entry.getKey())
+//                maxPercent = entry.getValue();
+//            else
+//                break;
+//        }
+//        return maxPercent == null ? 0 : maxPercent;
+
+        //2. megoldás
+
+        Optional<Double> optionalMax = limits.keySet().stream().filter(k -> k <= yearsAtJob).max(Double::compare);
+        return optionalMax.isEmpty() ? 0 : limits.get(optionalMax.get());
+
+        //3. megoldás
+//        Entry<Double, Integer> floorEntry = limits.floorEntry(yearsAtJob);
+//        return floorEntry == null ? 0 : floorEntry.getValue();
     }
 
     private double getYearsAtJob(Employee employee) {
         LocalDate currentDate = LocalDate.now();
-        LocalDate jobStartDate = employee.getTimestamp().toLocalDate();
+        LocalDate jobStartDate = employee.getDateOfStartWork().toLocalDate();
         return Period.between(jobStartDate, currentDate).toTotalMonths() / 12.0;
     }
 }

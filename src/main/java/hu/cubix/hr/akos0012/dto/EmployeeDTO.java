@@ -4,20 +4,29 @@ import java.time.LocalDateTime;
 
 public class EmployeeDTO {
     private final long id;
+    private String name;
     private String job;
     private int salary;
-    private LocalDateTime timestamp;
+    private LocalDateTime dateOfStartWork;
 
-    public EmployeeDTO(long id, String job, int salary, LocalDateTime timestamp) {
+    public EmployeeDTO(long id, String name, String job, int salary, LocalDateTime dateOfStartWork) {
         this.id = id;
+        this.name = name;
         this.job = job;
         this.salary = salary;
-        this.timestamp = timestamp;
+        this.dateOfStartWork = dateOfStartWork;
     }
-
 
     public long getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getJob() {
@@ -36,11 +45,11 @@ public class EmployeeDTO {
         this.salary = salary;
     }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+    public LocalDateTime getDateOfStartWork() {
+        return dateOfStartWork;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
+    public void setDateOfStartWork(LocalDateTime dateOfStartWork) {
+        this.dateOfStartWork = dateOfStartWork;
     }
 }

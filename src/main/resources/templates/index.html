@@ -5,22 +5,38 @@
     <title>Title</title>
 </head>
 <body>
-<h3>Welcome to the HR application</h3>
+<h1>List of employees</h1>
 
-<ul>
-    <li th:each="employee : ${employees}">
-        <span th:text="${employee.id}"></span>
-        <span th:text="${employee.job}"></span>
-        <span th:text="${employee.salary}"></span>
-        <span th:text="${employee.timestamp}"></span>
-    </li>
-</ul>
+<table border="1">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Title</th>
+        <th>Salary</th>
+        <th>Entry date</th>
+    </tr>
+    </thead>
 
-<form th:object="${newEmployee}" method="post" th:action="@{/employee}">
+    <tbody>
+    <tr th:each="employee : ${employees}">
+        <td th:text="${employee.id}">Id</td>
+        <td th:text="${employee.name}">Name</td>
+        <td th:text="${employee.job}">Title</td>
+        <td th:text="${employee.salary}">Salary</td>
+        <td th:text="${employee.dateOfStartWork}">EntryDate</td>
+    </tr>
+    </tbody>
+</table>
+<br>
+<br>
+
+<form th:action="@{/employee}" method="post" th:object="${newEmployee}">
     Id: <input th:field="*{id}"/> <br/>
+    Name: <input th:field="*{name}"/><br>
     Job: <input th:field="*{job}"/> <br/>
     Salary: <input th:field="*{salary}"/> <br/>
-    Timestamp: <input th:field="*{timestamp}"/><br/>
+    Entry date: <input th:field="*{dateOfStartWork}"/><br/>
     <input type="submit" th:value="Create"/>
 </form>
 </body>

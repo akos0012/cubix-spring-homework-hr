@@ -3,13 +3,21 @@ spring:
     name: hr
   profiles:
     active: prod
+  thymeleaf:
+    cache: false
+
+  mvc:
+    format:
+      date-time: yyyy-MM-dd HH:mm:ss
 
 hr:
   salary:
+    def:
+      percent: 5
     smart:
-      limit1: 10
-      raise1: 10
-      limit2: 5
-      raise2: 5
-      limit3: 2.5
-      raise3: 2
+      limits:
+        1: 1
+        2.5: 2
+        5: 5
+        10: 10
+        7.5: 8

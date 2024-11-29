@@ -4,6 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.TreeMap;
 
 @ConfigurationProperties(prefix = "hr")
 @Component
@@ -20,6 +21,7 @@ public class HrConfigurationProperties {
 
     public static class Salary {
         private Smart smart;
+        private Default def;
 
         public Smart getSmart() {
             return smart;
@@ -29,25 +31,36 @@ public class HrConfigurationProperties {
             this.smart = smart;
         }
 
-        public static class Smart {
-            private List<Float> limits;
-            private List<Integer> raises;
+        public Default getDef() {
+            return def;
+        }
 
-            public List<Float> getLimits() {
-                return limits;
-            }
+        public void setDef(Default def) {
+            this.def = def;
+        }
+    }
 
-            public void setLimits(List<Float> limits) {
-                this.limits = limits;
-            }
+    public static class Default {
+        private int percent;
 
-            public List<Integer> getRaises() {
-                return raises;
-            }
+        public int getPercent() {
+            return percent;
+        }
 
-            public void setRaises(List<Integer> raises) {
-                this.raises = raises;
-            }
+        public void setPercent(int percent) {
+            this.percent = percent;
+        }
+    }
+
+    public static class Smart {
+        private TreeMap<Double, Integer> limits;
+
+        public TreeMap<Double, Integer> getLimits() {
+            return limits;
+        }
+
+        public void setLimits(TreeMap<Double, Integer> limits) {
+            this.limits = limits;
         }
     }
 }
