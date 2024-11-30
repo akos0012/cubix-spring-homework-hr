@@ -1,6 +1,9 @@
 package hu.cubix.hr.akos0012.controller;
 
 import hu.cubix.hr.akos0012.dto.EmployeeDTO;
+import hu.cubix.hr.akos0012.model.Employee;
+import hu.cubix.hr.akos0012.service.SalaryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,9 +15,20 @@ import java.util.*;
 public class EmployeeController {
     private final Map<Long, EmployeeDTO> employees = new HashMap<>();
 
+    @Autowired
+    SalaryService salaryService;
+
     {
-        employees.put(1L, new EmployeeDTO(1, "Akos", "OTP Bank", 12000, LocalDateTime.of(2020, 2, 14, 8, 0)));
-        employees.put(2L, new EmployeeDTO(2, "Barna", "OTP Bank", 10000, LocalDateTime.of(2010, 5, 4, 8, 0)));
+        employees.put(1L, new EmployeeDTO(1, "Akos", "Developer", 12000, LocalDateTime.of(2020, 2, 14, 8, 0)));
+        employees.put(2L, new EmployeeDTO(2, "Barna", "Tester", 10000, LocalDateTime.of(2010, 5, 4, 8, 0)));
+    }
+
+    //get the percentage of pay raise for that employee
+    @PostMapping("/payRaisePercentage")
+    public ResponseEntity<Integer> getPayRaisePercentage(@RequestBody Employee employee) {
+        if (employee == null) return ResponseEntity.badRequest().build();
+        int payRaisePercentage = salaryService.getPercentageOfPayRaise(employee);
+        return ResponseEntity.ok(payRaisePercentage);
     }
 
     //Listing all employees

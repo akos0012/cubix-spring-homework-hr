@@ -21,10 +21,17 @@
     <tbody>
     <tr th:each="employee : ${employees}">
         <td th:text="${employee.id}">Id</td>
-        <td th:text="${employee.name}">Name</td>
+        <td>
+            <a th:href="@{/editEmployee/{id}(id=${employee.id})}" th:text="${employee.name}">Name</a>
+        </td>
         <td th:text="${employee.job}">Title</td>
         <td th:text="${employee.salary}">Salary</td>
         <td th:text="${employee.dateOfStartWork}">EntryDate</td>
+        <td>
+            <form th:action="@{/deleteEmployee/{id}(id=${employee.id})}" method="post">
+                <input th:value="Delete" type="submit" onClick="return confirm('sure?')"/>
+            </form>
+        </td>
     </tr>
     </tbody>
 </table>

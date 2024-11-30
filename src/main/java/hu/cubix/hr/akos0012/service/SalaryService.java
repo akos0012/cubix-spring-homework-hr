@@ -8,6 +8,7 @@ public class SalaryService {
 
     private EmployeeService employeeService;
 
+
     public SalaryService(EmployeeService employeeService) {
         this.employeeService = employeeService;
     }
@@ -18,5 +19,9 @@ public class SalaryService {
         int percent_divisor = 100;
         int newSalary = currentSalary + (currentSalary * payRaisePercent / percent_divisor);
         employee.setSalary(newSalary);
+    }
+
+    public int getPercentageOfPayRaise(Employee employee) {
+        return employeeService.getPayRaisePercent(employee);
     }
 }
