@@ -1,7 +1,7 @@
 package hu.cubix.hr.akos0012;
 
 import hu.cubix.hr.akos0012.model.Employee;
-import hu.cubix.hr.akos0012.service.SalaryService;
+import hu.cubix.hr.akos0012.service.payRaiseService.SalaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

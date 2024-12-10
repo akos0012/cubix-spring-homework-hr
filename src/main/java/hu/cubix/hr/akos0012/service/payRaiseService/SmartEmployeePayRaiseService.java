@@ -1,21 +1,18 @@
-package hu.cubix.hr.akos0012.service;
+package hu.cubix.hr.akos0012.service.payRaiseService;
 
 import hu.cubix.hr.akos0012.config.HrConfigurationProperties;
 import hu.cubix.hr.akos0012.model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import hu.cubix.hr.akos0012.config.HrConfigurationProperties.Smart;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.TreeMap;
 
 @Service
-public class SmartEmployeeService implements EmployeeService {
+public class SmartEmployeePayRaiseService implements EmployeePayRaiseService {
 
 //    @Value("${hr.salary.smart.limit1}")
 //    private float limit1;
