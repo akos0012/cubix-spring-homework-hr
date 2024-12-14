@@ -5,6 +5,14 @@ spring:
     active: smart
   thymeleaf:
     cache: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hr
+    username: postgres
+    password: uborka
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
 
   mvc:
     format:
@@ -21,3 +29,4 @@ hr:
         5: 5
         10: 10
         7.5: 8
+

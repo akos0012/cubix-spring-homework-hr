@@ -1,8 +1,15 @@
 package hu.cubix.hr.akos0012.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+
 import java.time.LocalDateTime;
 
+@Entity
 public class Employee {
+    @Id
+    @GeneratedValue
     private long id;
     private String name;
     private String jobTitle;
@@ -12,8 +19,7 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(long id, String name, String jobTitle, int salary, LocalDateTime dateOfStartWork) {
-        this.id = id;
+    public Employee(String name, String jobTitle, int salary, LocalDateTime dateOfStartWork) {
         this.name = name;
         this.jobTitle = jobTitle;
         this.salary = salary;

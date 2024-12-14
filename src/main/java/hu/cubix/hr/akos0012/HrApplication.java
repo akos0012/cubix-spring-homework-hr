@@ -21,8 +21,8 @@ public class HrApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Employee employee1 = new Employee(516151, "Akos", "OTP Bank", 10000, LocalDateTime.of(2020, 2, 14, 8, 0));
-        Employee employee2 = new Employee(425893, "Barna", "OTP Bank", 10000, LocalDateTime.of(2010, 5, 4, 8, 0));
+        Employee employee1 = new Employee("Akos", "OTP Bank", 10000, LocalDateTime.of(2020, 2, 14, 8, 0));
+        Employee employee2 = new Employee("Barna", "OTP Bank", 10000, LocalDateTime.of(2010, 5, 4, 8, 0));
 
         salaryService.setNewSalary(employee1);
         salaryService.setNewSalary(employee2);

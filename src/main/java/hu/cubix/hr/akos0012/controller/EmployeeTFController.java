@@ -22,8 +22,8 @@ public class EmployeeTFController {
     public List<Employee> employees = new ArrayList<>();
 
     {
-        employees.add(new Employee(516151, "Akos", "Developer", 10000, LocalDateTime.of(2020, 2, 14, 8, 0)));
-        employees.add(new Employee(425893, "Barna", "Tester", 10000, LocalDateTime.of(2010, 5, 4, 8, 0)));
+        employees.add(new Employee("Akos", "Developer", 10000, LocalDateTime.of(2020, 2, 14, 8, 0)));
+        employees.add(new Employee("Barna", "Tester", 10000, LocalDateTime.of(2010, 5, 4, 8, 0)));
     }
 
     @GetMapping("/")
