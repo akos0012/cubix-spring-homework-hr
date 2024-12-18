@@ -1,4 +1,4 @@
-package hu.cubix.hr.akos0012.service.payRaiseService;
+package hu.cubix.hr.akos0012.service;
 
 import hu.cubix.hr.akos0012.config.HrConfigurationProperties;
 import hu.cubix.hr.akos0012.model.Employee;
@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 
 @Service
-public class SmartEmployeePayRaiseService implements EmployeePayRaiseService {
+public class SmartEmployeeService extends AbstractEmployeeService {
 
 //    @Value("${hr.salary.smart.limit1}")
 //    private float limit1;
