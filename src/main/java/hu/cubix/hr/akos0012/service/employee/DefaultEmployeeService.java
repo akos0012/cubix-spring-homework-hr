@@ -1,4 +1,4 @@
-package hu.cubix.hr.akos0012.service;
+package hu.cubix.hr.akos0012.service.employee;
 
 import hu.cubix.hr.akos0012.config.HrConfigurationProperties;
 import hu.cubix.hr.akos0012.model.Employee;

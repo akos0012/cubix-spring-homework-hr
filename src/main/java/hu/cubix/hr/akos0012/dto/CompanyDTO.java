@@ -1,7 +1,9 @@
 package hu.cubix.hr.akos0012.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import hu.cubix.hr.akos0012.model.CompanyForm;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,11 +19,14 @@ public record CompanyDTO(
         @NotEmpty String name,
 
         @JsonView(Views.BaseData.class)
+        @NotNull CompanyForm companyForm,
+
+        @JsonView(Views.BaseData.class)
         String address,
 
         Set<EmployeeDTO> employees
 ) {
-    public CompanyDTO(long id, @NotEmpty String registrationNumber, @NotEmpty String name, String address) {
-        this(id, registrationNumber, name, address, new HashSet<>());
+    public CompanyDTO {
+        employees = employees != null ? employees : new HashSet<>();
     }
 }

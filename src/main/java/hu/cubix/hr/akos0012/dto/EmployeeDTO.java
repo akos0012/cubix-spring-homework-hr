@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Positive;
 import java.time.LocalDateTime;
 
 
-public record EmployeeDTO(long id, @NotEmpty String name, String jobTitle, @Positive int salary,
+public record EmployeeDTO(long id, @NotEmpty String name, @Positive int salary,
                           @PastOrPresent LocalDateTime dateOfStartWork
 ) {
 }

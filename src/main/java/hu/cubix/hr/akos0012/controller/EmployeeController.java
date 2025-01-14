@@ -3,13 +3,15 @@ package hu.cubix.hr.akos0012.controller;
 import hu.cubix.hr.akos0012.dto.EmployeeDTO;
 import hu.cubix.hr.akos0012.mapper.EmployeeMapper;
 import hu.cubix.hr.akos0012.model.Employee;
-import hu.cubix.hr.akos0012.service.EmployeeService;
-import hu.cubix.hr.akos0012.service.SalaryService;
+import hu.cubix.hr.akos0012.service.employee.EmployeeService;
+import hu.cubix.hr.akos0012.service.employee.SalaryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -40,10 +42,10 @@ public class EmployeeController {
 
     //Listing all employees
     //Listing employees with salary higher than a given value passed as query parameter
-    //example url: http://localhost:8080/api/employees?salary=7000&jobTitle=Magyar Posta&startDate=2015-02-14T08:00:00&endDate=2020-02-14T08:00:00
+    //example url: http://localhost:8080/api/employees?salary=10000&job=Rock Analyst&name=Dwayne&startDate=1930-02-14T08:00:00&endDate=1980-02-14T08:00:00
     @GetMapping
     public List<EmployeeDTO> findAll(@RequestParam(required = false) Integer salary,
-                                     @RequestParam(required = false) String jobTitle,
+                                     @RequestParam(required = false) String job,
                                      @RequestParam(required = false) String name,
                                      @RequestParam(required = false)
                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
@@ -51,18 +53,18 @@ public class EmployeeController {
                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
 
         List<Employee> employeeList = employeeService.findAll();
-        List<Employee> filteredEmployees = findFilteredEmployees(employeeList, salary, jobTitle, name, startDate, endDate);
+        List<Employee> filteredEmployees = findFilteredEmployees(employeeList, salary, job, name, startDate, endDate);
 
         return employeeMapper.employeesToDtos(filteredEmployees);
     }
 
-    private List<Employee> findFilteredEmployees(List<Employee> employees, Integer salary, String jobTitle, String name, LocalDateTime startDate, LocalDateTime endDate) {
+    private List<Employee> findFilteredEmployees(List<Employee> employees, Integer salary, String job, String name, LocalDateTime startDate, LocalDateTime endDate) {
         if (salary != null) {
             List<Employee> salaryFiltered = employeeService.findBySalaryIsGreaterThan(salary);
             employees = intersection(employees, salaryFiltered);
         }
-        if (jobTitle != null) {
-            List<Employee> jobTitleFiltered = employeeService.findByJobTitle(jobTitle);
+        if (job != null) {
+            List<Employee> jobTitleFiltered = employeeService.findByJobTitle(job);
             employees = intersection(employees, jobTitleFiltered);
         }
         if (name != null) {
@@ -85,18 +87,26 @@ public class EmployeeController {
     }
 
     //Return an employee with a given id
+
+    @GetMapping("/paged")
+    public Page<EmployeeDTO> getPagedEmployees(@RequestParam int page, @RequestParam int size) {
+        Page<Employee> pagedEmployees = employeeService.findEmployeesWithPaging(page, size);
+        System.out.println("Page number: " + pagedEmployees.getNumber());
+        System.out.println("Total pages: " + pagedEmployees.getTotalPages());
+        System.out.println("Total elements: " + pagedEmployees.getTotalElements());
+        System.out.println("Number of elements: " + pagedEmployees.getNumberOfElements());
+        //System.out.println("Content: " + pagedEmployees.getContent());
+
+
+        return employeeMapper.pagedEmployeeToDto(pagedEmployees);
+    }
+
+
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeDTO> findById(@PathVariable long id) {
         Employee employee = employeeService.findById(id);
         if (employee != null) return ResponseEntity.ok(employeeMapper.employeeToDto(employee));
         return ResponseEntity.notFound().build();
-    }
-
-    //Find the employees with a given a job
-    @GetMapping("/{jobTitle}")
-    public List<EmployeeDTO> findEmployeesByJobTitle(@PathVariable String jobTitle) {
-        List<Employee> employees = employeeService.findByJobTitle(jobTitle);
-        return employeeMapper.employeesToDtos(employees);
     }
 
     //Adding a new employee
@@ -115,7 +125,7 @@ public class EmployeeController {
     public EmployeeDTO update(@PathVariable long id, @RequestBody @Valid EmployeeDTO employeeDTO) {
 
         //if (employeeDTO.id() != id) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        employeeDTO = new EmployeeDTO(id, employeeDTO.name(), employeeDTO.jobTitle(), employeeDTO.salary(), employeeDTO.dateOfStartWork());
+        employeeDTO = new EmployeeDTO(id, employeeDTO.name(), employeeDTO.salary(), employeeDTO.dateOfStartWork());
 
         Employee employee = employeeMapper.dtoToEmployee(employeeDTO);
         Employee updatedEmployee = employeeService.update(employee);
@@ -125,6 +135,14 @@ public class EmployeeController {
 
         return employeeMapper.employeeToDto(updatedEmployee);
     }
+
+    @Transactional
+    @PutMapping("/updateMinSalaryByPosition")
+    public String updateMinSalaryByPosition(@RequestParam long companyID, @RequestParam String positionName, @RequestParam int minSalary) {
+        int numberOfUpdatedRows = employeeService.updateSalaryForPosition(companyID, positionName, minSalary);
+        return String.format("%d employee(s) had their salary updated", numberOfUpdatedRows);
+    }
+
 
     //Deleting an existing employee
     @DeleteMapping("/{id}")

@@ -31,7 +31,7 @@ public class EmployeeControllerIT {
             newId = employeesBefore.get(employeesBefore.size() - 1).id() + 1;
         }
 
-        newEmployee = new EmployeeDTO(newId, "Imre", "Magyar Posta", 10000000, LocalDateTime.now());
+        newEmployee = new EmployeeDTO(newId, "Imre", 10000000, LocalDateTime.now());
 
         createEmployee(newEmployee);
     }
@@ -46,7 +46,7 @@ public class EmployeeControllerIT {
 
     @Test
     void testThatEmployeeIsUpdated() {
-        EmployeeDTO updatedEmployee = new EmployeeDTO(newEmployee.id(), "Imre", "OTP Bank", 20000000, LocalDateTime.now());
+        EmployeeDTO updatedEmployee = new EmployeeDTO(newEmployee.id(), "Imre", 20000000, LocalDateTime.now());
 
         updateEmployee(updatedEmployee, newEmployee.id());
 
