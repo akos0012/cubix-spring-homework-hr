@@ -8,7 +8,16 @@ import java.util.*;
         name = "Company.withEmployees",
         attributeNodes = {
                 @NamedAttributeNode("companyForm"),
-                @NamedAttributeNode("employees")
+                @NamedAttributeNode("employees"),
+                @NamedAttributeNode(value = "employees", subgraph = "employeePosition")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "employeePosition",
+                        attributeNodes = {
+                                @NamedAttributeNode("position")
+                        }
+                )
         }
 )
 

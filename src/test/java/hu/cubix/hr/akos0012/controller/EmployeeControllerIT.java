@@ -1,9 +1,11 @@
 package hu.cubix.hr.akos0012.controller;
 
 import hu.cubix.hr.akos0012.dto.EmployeeDTO;
+import hu.cubix.hr.akos0012.model.Employee;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -15,6 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestDatabase
 public class EmployeeControllerIT {
     public static final String API_EMPLOYEES = "/api/employees";
 
@@ -31,7 +34,8 @@ public class EmployeeControllerIT {
             newId = employeesBefore.get(employeesBefore.size() - 1).id() + 1;
         }
 
-        newEmployee = new EmployeeDTO(newId, "Imre", 10000000, LocalDateTime.now());
+        LocalDateTime fixedTimestamp = LocalDateTime.of(2025, 1, 15, 12, 0);
+        newEmployee = new EmployeeDTO(newId, "Imre", 10000000, null, fixedTimestamp);
 
         createEmployee(newEmployee);
     }
@@ -46,13 +50,23 @@ public class EmployeeControllerIT {
 
     @Test
     void testThatEmployeeIsUpdated() {
-        EmployeeDTO updatedEmployee = new EmployeeDTO(newEmployee.id(), "Imre", 20000000, LocalDateTime.now());
+        LocalDateTime fixedTimestamp = LocalDateTime.of(2025, 1, 9, 11, 0);
+        EmployeeDTO updatedEmployee = new EmployeeDTO(newEmployee.id(), "Imre", 20000000, null, fixedTimestamp);
 
         updateEmployee(updatedEmployee, newEmployee.id());
 
         List<EmployeeDTO> employeesAfter = getAllEmployees();
 
         assertThat(employeesAfter).anyMatch(e -> e.equals(updatedEmployee));
+    }
+
+    @Test
+    void testThatEmployeeIsDeleted() {
+        deleteEmployee(newEmployee.id());
+
+        List<EmployeeDTO> employeesAfter = getAllEmployees();
+
+        assertThat(employeesAfter).noneMatch(e -> e.equals(newEmployee));
     }
 
     private void createEmployee(EmployeeDTO newEmployee) {
@@ -69,6 +83,14 @@ public class EmployeeControllerIT {
                 .put()
                 .uri(API_EMPLOYEES + "/" + id)
                 .bodyValue(newEmployee)
+                .exchange()
+                .expectStatus().isOk();
+    }
+
+    private void deleteEmployee(long id) {
+        webTestClient
+                .delete()
+                .uri(API_EMPLOYEES + "/" + id)
                 .exchange()
                 .expectStatus().isOk();
     }

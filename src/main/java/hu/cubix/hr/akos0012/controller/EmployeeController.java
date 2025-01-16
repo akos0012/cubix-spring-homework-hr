@@ -1,6 +1,7 @@
 package hu.cubix.hr.akos0012.controller;
 
 import hu.cubix.hr.akos0012.dto.EmployeeDTO;
+import hu.cubix.hr.akos0012.dto.EmployeeFilterDTO;
 import hu.cubix.hr.akos0012.mapper.EmployeeMapper;
 import hu.cubix.hr.akos0012.model.Employee;
 import hu.cubix.hr.akos0012.service.employee.EmployeeService;
@@ -52,38 +53,9 @@ public class EmployeeController {
                                      @RequestParam(required = false)
                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
 
-        List<Employee> employeeList = employeeService.findAll();
-        List<Employee> filteredEmployees = findFilteredEmployees(employeeList, salary, job, name, startDate, endDate);
+        List<Employee> filteredEmployees = employeeService.findFilteredEmployees(salary, job, name, startDate, endDate);
 
         return employeeMapper.employeesToDtos(filteredEmployees);
-    }
-
-    private List<Employee> findFilteredEmployees(List<Employee> employees, Integer salary, String job, String name, LocalDateTime startDate, LocalDateTime endDate) {
-        if (salary != null) {
-            List<Employee> salaryFiltered = employeeService.findBySalaryIsGreaterThan(salary);
-            employees = intersection(employees, salaryFiltered);
-        }
-        if (job != null) {
-            List<Employee> jobTitleFiltered = employeeService.findByJobTitle(job);
-            employees = intersection(employees, jobTitleFiltered);
-        }
-        if (name != null) {
-            List<Employee> nameFiltered = employeeService.findByNameStartingWithIgnoreCase(name);
-            employees = intersection(employees, nameFiltered);
-        }
-        if (startDate != null && endDate != null) {
-            if (!startDate.isBefore(endDate)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-            List<Employee> dateFiltered = employeeService.findByDateOfStartWorkBetween(startDate, endDate);
-            employees = intersection(employees, dateFiltered);
-        }
-
-        return employees;
-    }
-
-    private List<Employee> intersection(List<Employee> list1, List<Employee> list2) {
-        return list1.stream()
-                .filter(list2::contains)
-                .toList();
     }
 
     //Return an employee with a given id
@@ -120,12 +92,18 @@ public class EmployeeController {
         return employeeMapper.employeeToDto(savedEmployee);
     }
 
+    @PostMapping("/filter")
+    public List<EmployeeDTO> findEmployees(@RequestBody EmployeeFilterDTO employeeFilterDTO) {
+        List<Employee> employees = employeeService.findEmployeesByExample(employeeFilterDTO);
+        return employeeMapper.employeesToDtos(employees);
+    }
+
     //Modifying an existing employee
     @PutMapping("/{id}")
     public EmployeeDTO update(@PathVariable long id, @RequestBody @Valid EmployeeDTO employeeDTO) {
 
         //if (employeeDTO.id() != id) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        employeeDTO = new EmployeeDTO(id, employeeDTO.name(), employeeDTO.salary(), employeeDTO.dateOfStartWork());
+        employeeDTO = new EmployeeDTO(id, employeeDTO.name(), employeeDTO.salary(), employeeDTO.position(), employeeDTO.dateOfStartWork());
 
         Employee employee = employeeMapper.dtoToEmployee(employeeDTO);
         Employee updatedEmployee = employeeService.update(employee);
@@ -142,7 +120,6 @@ public class EmployeeController {
         int numberOfUpdatedRows = employeeService.updateSalaryForPosition(companyID, positionName, minSalary);
         return String.format("%d employee(s) had their salary updated", numberOfUpdatedRows);
     }
-
 
     //Deleting an existing employee
     @DeleteMapping("/{id}")

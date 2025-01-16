@@ -1,6 +1,7 @@
 package hu.cubix.hr.akos0012.service.employee;
 
 import hu.cubix.hr.akos0012.model.Employee;
+import hu.cubix.hr.akos0012.dto.EmployeeFilterDTO;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
@@ -32,4 +33,8 @@ public interface EmployeeService {
     Page<Employee> findEmployeesWithPaging(int page, int size);
 
     int updateSalaryForPosition(long companyID, String positionName, int minSalary);
+
+    List<Employee> findEmployeesByExample(EmployeeFilterDTO employeeFilterDTO);
+
+    List<Employee> findFilteredEmployees(Integer salary, String job, String name, LocalDateTime startDate, LocalDateTime endDate);
 }

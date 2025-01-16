@@ -46,33 +46,10 @@ public class CompanyController {
                                             @RequestParam(required = false) Integer salary,
                                             @RequestParam(required = false) Integer limit) {
 
-        List<Company> companies = full.orElse(false)
-                ? companyRepository.findAllWithEmployees()
-                : companyService.findAll();
-        List<Company> filteredCompanies = findFilteredCompanies(companies, salary, limit);
+        List<Company> companies = companyService.findFilteredCompanies(full.orElse(false), salary, limit);
 
-        if (full.orElse(false)) return companyMapper.companiesToDtos(filteredCompanies);
-        else return companyMapper.companiesToSummaryDtos(filteredCompanies);
-    }
-
-    private List<Company> findFilteredCompanies(List<Company> companies, Integer salary, Integer limit) {
-        if (salary != null) {
-            List<Company> salaryFiltered = companyService.findDistinctByEmployeesSalaryGreaterThan(salary);
-            companies = intersection(companies, salaryFiltered);
-        }
-
-        if (limit != null) {
-            List<Company> numberOfEmployeesFiltered = companyService.findCompaniesWithMoreThanEmployees(limit);
-            companies = intersection(companies, numberOfEmployeesFiltered);
-        }
-
-        return companies;
-    }
-
-    private List<Company> intersection(List<Company> list1, List<Company> list2) {
-        return list1.stream()
-                .filter(list2::contains)
-                .toList();
+        if (full.orElse(false)) return companyMapper.companiesToDtos(companies);
+        else return companyMapper.companiesToSummaryDtos(companies);
     }
 
     @GetMapping("/paged")
@@ -114,9 +91,7 @@ public class CompanyController {
     @GetMapping("/{id}")
     public CompanyDTO findById(@PathVariable long id, @RequestParam Optional<Boolean> full) {
         //Company company = companyService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        Optional<Company> optionalCompany = full.orElse(false)
-                ? companyRepository.findByIdWithEmployees(id)
-                : companyService.findById(id);
+        Optional<Company> optionalCompany = companyService.findCompanyById(id, full.orElse(false));
         if (optionalCompany.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
@@ -176,17 +151,17 @@ public class CompanyController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
         //If employees are not provided, the employees list should remain unchanged.
-        if (companyDTO.employees() == null && companyService.findById(companyID).isPresent()) {
-            List<Employee> companyEmployees = companyService.findById(companyID).get().getEmployees();
-            companyDTO = new CompanyDTO(
-                    companyDTO.id(),
-                    companyDTO.registrationNumber(),
-                    companyDTO.name(),
-                    companyDTO.companyForm(),
-                    companyDTO.address(),
-                    new HashSet<>(employeeMapper.employeesToDtos(companyEmployees))
-            );
-        }
+//        if (companyDTO.employees() == null && companyService.findById(companyID).isPresent()) {
+//            List<Employee> companyEmployees = companyService.findById(companyID).get().getEmployees();
+//            companyDTO = new CompanyDTO(
+//                    companyDTO.id(),
+//                    companyDTO.registrationNumber(),
+//                    companyDTO.name(),
+//                    companyDTO.companyForm(),
+//                    companyDTO.address(),
+//                    new HashSet<>(employeeMapper.employeesToDtos(companyEmployees))
+//            );
+//        }
 
         Company company = companyMapper.dtoToCompany(companyDTO);
         Company updatedCompany = companyService.update(company);
