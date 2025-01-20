@@ -2,6 +2,7 @@ package hu.cubix.hr.akos0012.service.db;
 
 import hu.cubix.hr.akos0012.model.*;
 import hu.cubix.hr.akos0012.repository.*;
+import hu.cubix.hr.akos0012.service.timeOffRequest.TimeOffRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,9 @@ public class InitDbService {
 
     @Autowired
     PositionDetailsByCompanyRepository positionDetailsByCompanyRepository;
+
+    @Autowired
+    TimeOffRequestRepository timeOffRequestRepository;
 
     public void clearDB() {
         employeeRepository.deleteAll();
@@ -82,6 +86,18 @@ public class InitDbService {
         pd2.setPosition(projectManager);
         positionDetailsByCompanyRepository.save(pd2);
 
+
+        //Time Off Requests
+        TimeOffRequest request1 = new TimeOffRequest(employee3, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(6));
+        TimeOffRequest request2 = new TimeOffRequest(employee4, LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(30));
+        TimeOffRequest request3 = new TimeOffRequest(employee4, LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(15));
+
+        request1.judge(employee5, RequestStatus.ACCEPTED);
+        request2.judge(employee5, RequestStatus.REJECTED);
+
+        timeOffRequestRepository.save(request1);
+        timeOffRequestRepository.save(request2);
+        timeOffRequestRepository.save(request3);
     }
 
 }
