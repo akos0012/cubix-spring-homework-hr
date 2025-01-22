@@ -42,14 +42,16 @@ public class CompanyController {
     //example url: http://localhost:8080/api/companies?full=true&salary=10000&limit=2
 
     @GetMapping
-    public List<CompanyDTO> getAllCompanies(@RequestParam Optional<Boolean> full,
+    public Page<CompanyDTO> getAllCompanies(@RequestParam Optional<Boolean> full,
                                             @RequestParam(required = false) Integer salary,
-                                            @RequestParam(required = false) Integer limit) {
+                                            @RequestParam(required = false) Integer limit,
+                                            @RequestParam(defaultValue = "0") int page,
+                                            @RequestParam(defaultValue = "10") int size) {
 
-        List<Company> companies = companyService.findFilteredCompanies(full.orElse(false), salary, limit);
+        Page<Company> companies = companyService.findFilteredCompanies(full.orElse(false), salary, limit, page, size);
 
-        if (full.orElse(false)) return companyMapper.companiesToDtos(companies);
-        else return companyMapper.companiesToSummaryDtos(companies);
+        if (full.orElse(false)) return companyMapper.pagedCompanyToDto(companies);
+        else return companyMapper.pagedCompaniesToSummaryDtos(companies);
     }
 
     @GetMapping("/paged")
@@ -210,7 +212,7 @@ public class CompanyController {
         return companyMapper.companyToDto(company);
     }
 
-    @Transactional
+
     @PutMapping("/updateMinSalaryByPosition")
     public void updateMinSalaryByPosition(@RequestParam long companyID, @RequestParam String positionName, @RequestParam int minSalary) {
         salaryService.raiseMinSalary(companyID, positionName, minSalary);

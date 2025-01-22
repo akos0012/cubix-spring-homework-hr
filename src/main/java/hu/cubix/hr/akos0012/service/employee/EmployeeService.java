@@ -3,6 +3,7 @@ package hu.cubix.hr.akos0012.service.employee;
 import hu.cubix.hr.akos0012.model.Employee;
 import hu.cubix.hr.akos0012.dto.EmployeeFilterDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +33,7 @@ public interface EmployeeService {
 
     Page<Employee> findEmployeesWithPaging(int page, int size);
 
+    @Transactional
     int updateSalaryForPosition(long companyID, String positionName, int minSalary);
 
     List<Employee> findEmployeesByExample(EmployeeFilterDTO employeeFilterDTO);

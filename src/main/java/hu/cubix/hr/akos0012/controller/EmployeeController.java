@@ -114,7 +114,7 @@ public class EmployeeController {
         return employeeMapper.employeeToDto(updatedEmployee);
     }
 
-    @Transactional
+
     @PutMapping("/updateMinSalaryByPosition")
     public String updateMinSalaryByPosition(@RequestParam long companyID, @RequestParam String positionName, @RequestParam int minSalary) {
         int numberOfUpdatedRows = employeeService.updateSalaryForPosition(companyID, positionName, minSalary);

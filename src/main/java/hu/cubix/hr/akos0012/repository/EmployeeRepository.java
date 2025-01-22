@@ -21,10 +21,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSp
 
     List<Employee> findByDateOfStartWorkBetween(LocalDateTime startDate, LocalDateTime endDate);
 
-
-    @NonNull
-    Page<Employee> findAll(@NonNull Pageable pageable);
-
     @Modifying
     @Query("UPDATE Employee e SET e.salary = :minSalary WHERE e.company.id = :companyID AND e.position.name = :positionName AND e.salary < :minSalary")
     int updateSalaryForPosition(@Param("companyID") long companyID, @Param("positionName") String positionName, @Param("minSalary") int minSalary);

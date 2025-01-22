@@ -22,6 +22,10 @@ public interface CompanyMapper {
 
     @IterableMapping(qualifiedByName = "summary")
     List<CompanyDTO> companiesToSummaryDtos(List<Company> companies);
+    
+    default Page<CompanyDTO> pagedCompaniesToSummaryDtos(Page<Company> pagedCompanies) {
+        return pagedCompanies.map(this::companyToSummaryDto);
+    }
 
     Company dtoToCompany(CompanyDTO companyDTO);
 
