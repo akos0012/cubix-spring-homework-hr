@@ -10,7 +10,7 @@
 <form th:action="@{/updateEmployee}" method="post" th:object="${employee}">
     Id: <input th:field="*{id}" readonly/> <br/>
     Name: <input th:field="*{name}"/> <br/>
-    Job: <input th:field="*{jobTitle}"/> <br/>
+
     Salary: <input th:field="*{salary}"/> <br/>
     Entry Date: <input th:field="*{dateOfStartWork}"/> <br/>
     <input type="submit" value="Save"/>

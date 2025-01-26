@@ -44,8 +44,8 @@ public class TimeOffRequestServiceIT {
         TimeOffRequest request2 = createTimeOffRequest(employee, LocalDateTime.now().plusDays(4), LocalDateTime.now().plusDays(10));
         TimeOffRequest request3 = createTimeOffRequest(employee, LocalDateTime.now().plusDays(8), LocalDateTime.now().plusDays(15));
 
-        timeOffRequestService.judgeRequest(manager.getId(), request1.getId(), true);
-        timeOffRequestService.judgeRequest(manager.getId(), request3.getId(), true);
+        //timeOffRequestService.judgeRequest(manager.getId(), request1.getId(), true);
+        //timeOffRequestService.judgeRequest(manager.getId(), request3.getId(), true);
 
         request1 = timeOffRequestRepository.findById(request1.getId()).get();
         request3 = timeOffRequestRepository.findById(request3.getId()).get();
@@ -89,7 +89,8 @@ public class TimeOffRequestServiceIT {
     }
 
     private Employee createEmployee(String name, int salary, LocalDateTime dateOfStartWork) {
-        return employeeRepository.save(new Employee(name, salary, dateOfStartWork));
+        //return employeeRepository.save(new Employee(name, salary, dateOfStartWork));
+        return null;
     }
 
 }

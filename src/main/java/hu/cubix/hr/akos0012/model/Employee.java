@@ -1,12 +1,10 @@
 package hu.cubix.hr.akos0012.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Employee {
@@ -18,6 +16,17 @@ public class Employee {
     private int salary;
     private LocalDateTime dateOfStartWork;
 
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    private String password;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> roles;
+
+    @ManyToOne
+    private Employee manager;
+
     @ManyToOne
     private Position position;
 
@@ -27,19 +36,24 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(long id, String name, int salary, LocalDateTime dateOfStartWork) {
+    public Employee(long id, String name, int salary, LocalDateTime dateOfStartWork, String username, String password) {
         this.id = id;
         this.name = name;
         this.salary = salary;
         this.dateOfStartWork = dateOfStartWork;
+        this.username = username;
+        this.password = password;
+        this.roles = Set.of("user");
     }
 
-    public Employee(String name, int salary, LocalDateTime dateOfStartWork) {
+    public Employee(String name, int salary, LocalDateTime dateOfStartWork, String username, String password) {
         this.name = name;
         this.salary = salary;
         this.dateOfStartWork = dateOfStartWork;
+        this.username = username;
+        this.password = password;
+        this.roles = Set.of("user");
     }
-
 
     public long getId() {
         return id;
@@ -87,6 +101,38 @@ public class Employee {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Employee getManager() {
+        return manager;
+    }
+
+    public void setManager(Employee manager) {
+        this.manager = manager;
+    }
+
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
 
     @Override

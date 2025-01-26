@@ -31,3 +31,8 @@ hr:
         10: 10
         7.5: 8
 
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+

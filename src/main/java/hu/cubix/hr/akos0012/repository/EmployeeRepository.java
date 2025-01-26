@@ -10,8 +10,11 @@ import org.springframework.lang.NonNull;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSpecificationExecutor<Employee> {
+
+    Optional<Employee> findByUsername(String username);
 
     List<Employee> findByPositionName(String positionName);
 

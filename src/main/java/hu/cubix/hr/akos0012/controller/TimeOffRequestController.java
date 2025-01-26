@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -70,10 +71,10 @@ public class TimeOffRequestController {
         return timeOffRequestMapper.timeOffRequestDto(timeOffRequest);
     }
 
-    @PostMapping("/{employeeID}")
-    public TimeOffRequestDTO createRequest(@PathVariable long employeeID, @RequestBody @Valid TimeOffRequestDatesDTO datesDTO) {
+    @PostMapping()
+    public TimeOffRequestDTO createRequest(@RequestBody @Valid TimeOffRequestDatesDTO datesDTO) {
 
-        TimeOffRequest timeOffRequest = timeOffRequestService.create(employeeID, datesDTO.startDate(), datesDTO.endDate());
+        TimeOffRequest timeOffRequest = timeOffRequestService.create(datesDTO.startDate(), datesDTO.endDate());
 
         if (timeOffRequest == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
@@ -89,9 +90,9 @@ public class TimeOffRequestController {
         return timeOffRequestMapper.timeOffRequestDto(timeOffRequest);
     }
 
-    @PutMapping("/judge/{managerID}")
-    public TimeOffRequestDTO judgeRequest(@PathVariable long managerID, @RequestParam long requestID, @RequestParam boolean accept) {
-        TimeOffRequest timeOffRequest = timeOffRequestService.judgeRequest(managerID, requestID, accept);
+    @PutMapping("/judge")
+    public TimeOffRequestDTO judgeRequest(@RequestParam long requestID, @RequestParam boolean accept) {
+        TimeOffRequest timeOffRequest = timeOffRequestService.judgeRequest(requestID, accept);
 
         if (timeOffRequest == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
@@ -103,7 +104,7 @@ public class TimeOffRequestController {
     public void delete(@PathVariable long id) {
         boolean isDeleted = timeOffRequestService.deleteRequest(id);
         if (!isDeleted)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Only PENDING requests can be deleted.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 
 }
