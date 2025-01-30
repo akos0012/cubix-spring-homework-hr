@@ -1,5 +1,6 @@
 package hu.cubix.hr.akos0012.service.timeOffRequest;
 
+import hu.cubix.hr.akos0012.dto.TimeOffRequestFilterDTO;
 import hu.cubix.hr.akos0012.model.Employee;
 import hu.cubix.hr.akos0012.model.RequestStatus;
 import hu.cubix.hr.akos0012.model.TimeOffRequest;
@@ -59,10 +60,10 @@ public class TimeOffRequestService {
     public TimeOffRequest create(LocalDateTime startDate, LocalDateTime endDate) {
         Optional<Employee> employee = employeeRepository.findByUsername(getCurrentUsername());
         if (employee.isEmpty()) return null;
-        if (employee.get().getManager() == null) return null;
         if (!isValidDateRange(startDate, endDate)) return null;
 
         TimeOffRequest timeOffRequest = new TimeOffRequest(employee.get(), startDate, endDate);
+        employee.get().addTimeOfRequest(timeOffRequest);
 
         return save(timeOffRequest);
     }
@@ -92,9 +93,9 @@ public class TimeOffRequestService {
         TimeOffRequest timeOffRequest = timeOffRequestRepository.findById(requestID).orElse(null);
         if (timeOffRequest == null) return null;
 
-        if (!manager.get().equals(timeOffRequest.getManager())) return null;
+        if (!manager.get().equals(timeOffRequest.getEmployee().getManager())) return null;
 
-        timeOffRequest.judge(accept ? RequestStatus.ACCEPTED : RequestStatus.REJECTED);
+        timeOffRequest.judge(accept ? RequestStatus.ACCEPTED : RequestStatus.REJECTED, manager.get());
 
         return timeOffRequestRepository.save(timeOffRequest);
     }
@@ -113,23 +114,17 @@ public class TimeOffRequestService {
         return true;
     }
 
-    public Page<TimeOffRequest> findRequestsByExample(int page,
-                                                      int size,
-                                                      String sortBy,
-                                                      String sortDirection,
-                                                      RequestStatus status,
-                                                      String employeePrefix,
-                                                      String managerPrefix,
-                                                      LocalDateTime createdStartDate,
-                                                      LocalDateTime createdEndDate,
-                                                      LocalDateTime timeOffRequestedStartDate,
-                                                      LocalDateTime timeOffRequestedEndDate) {
+    public Page<TimeOffRequest> findRequestsByExample(Pageable pageable, TimeOffRequestFilterDTO filterDTO) {
+
+        RequestStatus status = filterDTO.status();
+        String employeePrefix = filterDTO.employeePrefix();
+        String managerPrefix = filterDTO.managerPrefix();
+        LocalDateTime createdStartDate = filterDTO.createdStartDate();
+        LocalDateTime createdEndDate = filterDTO.createdEndDate();
+        LocalDateTime timeOffRequestedStartDate = filterDTO.timeOffRequestedStartDate();
+        LocalDateTime timeOffRequestedEndDate = filterDTO.timeOffRequestedEndDate();
 
         Specification<TimeOffRequest> specs = Specification.where(null);
-
-        //default: asc
-        Sort.Direction direction = sortDirection.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
 
         if (status != null) specs = specs.and(hasStatus(status));
 
@@ -140,8 +135,11 @@ public class TimeOffRequestService {
         if (createdStartDate != null && createdEndDate != null)
             specs = specs.and(createdBetween(createdStartDate, createdEndDate));
 
-        if (timeOffRequestedStartDate != null && timeOffRequestedEndDate != null)
-            specs = specs.and(intersectsWith(timeOffRequestedStartDate, timeOffRequestedEndDate));
+        if (timeOffRequestedStartDate != null)
+            specs = specs.and(isEndDateGreaterThan(timeOffRequestedStartDate));
+
+        if (timeOffRequestedEndDate != null)
+            specs = specs.and(isStartDateLessThan(timeOffRequestedEndDate));
 
         return timeOffRequestRepository.findAll(specs, pageable);
     }

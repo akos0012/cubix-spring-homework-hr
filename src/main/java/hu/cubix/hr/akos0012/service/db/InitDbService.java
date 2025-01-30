@@ -2,7 +2,6 @@ package hu.cubix.hr.akos0012.service.db;
 
 import hu.cubix.hr.akos0012.model.*;
 import hu.cubix.hr.akos0012.repository.*;
-import hu.cubix.hr.akos0012.service.timeOffRequest.TimeOffRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -102,8 +101,8 @@ public class InitDbService {
         TimeOffRequest request2 = new TimeOffRequest(employee4, LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(30));
         TimeOffRequest request3 = new TimeOffRequest(employee4, LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(15));
 
-        request1.judge(RequestStatus.ACCEPTED);
-        request2.judge(RequestStatus.REJECTED);
+        request1.judge(RequestStatus.ACCEPTED, employee5);
+        request2.judge(RequestStatus.REJECTED, employee5);
 
         timeOffRequestRepository.save(request1);
         timeOffRequestRepository.save(request2);

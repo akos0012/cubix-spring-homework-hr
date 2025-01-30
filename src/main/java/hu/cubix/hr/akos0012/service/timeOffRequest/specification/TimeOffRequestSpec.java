@@ -25,10 +25,11 @@ public class TimeOffRequestSpec {
         return (root, cq, cb) -> cb.between(root.get(TimeOffRequest_.createdAt), from, until);
     }
 
-    public static Specification<TimeOffRequest> intersectsWith(LocalDateTime from, LocalDateTime until) {
-        return (root, cq, cb) -> cb.and(
-                cb.lessThanOrEqualTo(root.get(TimeOffRequest_.endDate), until),
-                cb.greaterThanOrEqualTo(root.get(TimeOffRequest_.startDate), from)
-        );
+    public static Specification<TimeOffRequest> isStartDateLessThan(LocalDateTime date) {
+        return (root, cq, cb) -> cb.lessThan(root.get(TimeOffRequest_.startDate), date);
+    }
+
+    public static Specification<TimeOffRequest> isEndDateGreaterThan(LocalDateTime date) {
+        return (root, cq, cb) -> cb.greaterThan(root.get(TimeOffRequest_.endDate), date);
     }
 }

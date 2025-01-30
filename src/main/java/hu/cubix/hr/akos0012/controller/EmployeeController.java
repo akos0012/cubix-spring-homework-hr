@@ -9,6 +9,8 @@ import hu.cubix.hr.akos0012.service.employee.SalaryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,11 +60,10 @@ public class EmployeeController {
         return employeeMapper.employeesToDtos(filteredEmployees);
     }
 
-    //Return an employee with a given id
 
     @GetMapping("/paged")
-    public Page<EmployeeDTO> getPagedEmployees(@RequestParam int page, @RequestParam int size) {
-        Page<Employee> pagedEmployees = employeeService.findEmployeesWithPaging(page, size);
+    public Page<EmployeeDTO> getPagedEmployees(@SortDefault("id") Pageable pageable) {
+        Page<Employee> pagedEmployees = employeeService.findEmployeesWithPaging(pageable);
         System.out.println("Page number: " + pagedEmployees.getNumber());
         System.out.println("Total pages: " + pagedEmployees.getTotalPages());
         System.out.println("Total elements: " + pagedEmployees.getTotalElements());
@@ -73,7 +74,7 @@ public class EmployeeController {
         return employeeMapper.pagedEmployeeToDto(pagedEmployees);
     }
 
-
+    //Return an employee with a given id
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeDTO> findById(@PathVariable long id) {
         Employee employee = employeeService.findById(id);
@@ -92,7 +93,7 @@ public class EmployeeController {
         return employeeMapper.employeeToDto(savedEmployee);
     }
 
-    @PostMapping("/filter")
+    @PostMapping("/search")
     public List<EmployeeDTO> findEmployees(@RequestBody EmployeeFilterDTO employeeFilterDTO) {
         List<Employee> employees = employeeService.findEmployeesByExample(employeeFilterDTO);
         return employeeMapper.employeesToDtos(employees);

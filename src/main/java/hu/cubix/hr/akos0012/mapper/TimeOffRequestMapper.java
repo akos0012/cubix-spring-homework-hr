@@ -21,9 +21,7 @@ public interface TimeOffRequestMapper {
 
     TimeOffRequest dtoToTimeOffRequest(TimeOffRequestDTO timeOffRequestDTO);
 
-    List<TimeOffRequest> dtosToTimeOffRequest(List<TimeOffRequestDTO> timeOffRequestDTOS);
-
-    default Page<TimeOffRequestDTO> pagedTimeOffRequestDto(Page<TimeOffRequest> pagedTimeOffRequest) {
-        return pagedTimeOffRequest.map(this::timeOffRequestDto);
-    }
+//    default Page<TimeOffRequestDTO> pagedTimeOffRequestDto(Page<TimeOffRequest> pagedTimeOffRequest) {
+//        return pagedTimeOffRequest.map(this::timeOffRequestDto);
+//    }
 }

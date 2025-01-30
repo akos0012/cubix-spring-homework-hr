@@ -3,6 +3,7 @@ package hu.cubix.hr.akos0012.service.employee;
 import hu.cubix.hr.akos0012.model.Employee;
 import hu.cubix.hr.akos0012.dto.EmployeeFilterDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -23,15 +24,7 @@ public interface EmployeeService {
 
     void delete(long id);
 
-    List<Employee> findByJobTitle(String jobTitle);
-
-    List<Employee> findBySalaryIsGreaterThan(int salary);
-
-    List<Employee> findByNameStartingWithIgnoreCase(String name);
-
-    List<Employee> findByDateOfStartWorkBetween(LocalDateTime startDate, LocalDateTime endDate);
-
-    Page<Employee> findEmployeesWithPaging(int page, int size);
+    Page<Employee> findEmployeesWithPaging(Pageable pageable);
 
     @Transactional
     int updateSalaryForPosition(long companyID, String positionName, int minSalary);

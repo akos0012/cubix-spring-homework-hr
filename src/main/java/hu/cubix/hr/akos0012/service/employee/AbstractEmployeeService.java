@@ -38,28 +38,7 @@ public abstract class AbstractEmployeeService implements EmployeeService {
     }
 
     @Override
-    public List<Employee> findByJobTitle(String jobTitle) {
-        return employeeRepository.findByPositionName(jobTitle);
-    }
-
-    @Override
-    public List<Employee> findBySalaryIsGreaterThan(int salary) {
-        return employeeRepository.findBySalaryIsGreaterThan(salary);
-    }
-
-    @Override
-    public List<Employee> findByNameStartingWithIgnoreCase(String name) {
-        return employeeRepository.findByNameStartingWithIgnoreCase(name);
-    }
-
-    @Override
-    public List<Employee> findByDateOfStartWorkBetween(LocalDateTime startDate, LocalDateTime endDate) {
-        return employeeRepository.findByDateOfStartWorkBetween(startDate, endDate);
-    }
-
-    @Override
-    public Page<Employee> findEmployeesWithPaging(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<Employee> findEmployeesWithPaging(Pageable pageable) {
         return employeeRepository.findAll(pageable);
     }
 
@@ -105,11 +84,11 @@ public abstract class AbstractEmployeeService implements EmployeeService {
 
         if (employeeID > 0) specs = specs.and(hasID(employeeID));
 
-        if (StringUtils.hasLength(employeePrefix)) specs = specs.and(employeeNameStartWith(employeePrefix));
+        if (StringUtils.hasText(employeePrefix)) specs = specs.and(employeeNameStartWith(employeePrefix));
 
-        if (StringUtils.hasLength(companyPrefix)) specs = specs.and(companyNameStartWith(companyPrefix));
+        if (StringUtils.hasText(companyPrefix)) specs = specs.and(companyNameStartWith(companyPrefix));
 
-        if (StringUtils.hasLength(position)) specs = specs.and(hasEmployeePositionName(position));
+        if (StringUtils.hasText(position)) specs = specs.and(hasEmployeePositionName(position));
 
         if (salary > 0) specs = specs.and(hasSalaryAround(salary));
 
@@ -119,33 +98,7 @@ public abstract class AbstractEmployeeService implements EmployeeService {
     }
 
     public List<Employee> findFilteredEmployees(Integer salary, String job, String name, LocalDateTime startDate, LocalDateTime endDate) {
-        List<Employee> employees = employeeRepository.findAll();
-
-        if (salary != null) {
-            List<Employee> salaryFiltered = findBySalaryIsGreaterThan(salary);
-            employees = intersection(employees, salaryFiltered);
-        }
-        if (job != null) {
-            List<Employee> jobTitleFiltered = findByJobTitle(job);
-            employees = intersection(employees, jobTitleFiltered);
-        }
-        if (name != null) {
-            List<Employee> nameFiltered = findByNameStartingWithIgnoreCase(name);
-            employees = intersection(employees, nameFiltered);
-        }
-        if (startDate != null && endDate != null) {
-            if (!startDate.isBefore(endDate)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-            List<Employee> dateFiltered = findByDateOfStartWorkBetween(startDate, endDate);
-            employees = intersection(employees, dateFiltered);
-        }
-
-        return employees;
-    }
-
-    private List<Employee> intersection(List<Employee> list1, List<Employee> list2) {
-        return list1.stream()
-                .filter(list2::contains)
-                .toList();
+        return employeeRepository.findAll(salary, job, name, startDate, endDate);
     }
 
 }

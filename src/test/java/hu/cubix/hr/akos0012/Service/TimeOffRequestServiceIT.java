@@ -1,5 +1,6 @@
 package hu.cubix.hr.akos0012.Service;
 
+import hu.cubix.hr.akos0012.dto.TimeOffRequestFilterDTO;
 import hu.cubix.hr.akos0012.model.Employee;
 import hu.cubix.hr.akos0012.model.RequestStatus;
 import hu.cubix.hr.akos0012.model.TimeOffRequest;
@@ -11,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,11 +55,12 @@ public class TimeOffRequestServiceIT {
 
         RequestStatus testRequestStatus = RequestStatus.ACCEPTED;
         int page = 0;
-        String sortBy = "startDate";
         int size = timeOffRequestRepository.findAll().size();
+        Pageable pageable = PageRequest.of(page, size);
+        TimeOffRequestFilterDTO filterDTO = new TimeOffRequestFilterDTO(testRequestStatus, null, null, null, null, null, null);
 
 
-        List<TimeOffRequest> foundRequests = timeOffRequestService.findRequestsByExample(page, size, sortBy, "", testRequestStatus, null, null, null, null, null, null).getContent();
+        List<TimeOffRequest> foundRequests = timeOffRequestService.findRequestsByExample(pageable, filterDTO).getContent();
 
 
         assertThat(foundRequests).containsExactlyInAnyOrder(request1, request3);
@@ -74,11 +78,12 @@ public class TimeOffRequestServiceIT {
 
         String name = "j";
         int page = 0;
-        String sortBy = "startDate";
         int size = timeOffRequestRepository.findAll().size();
+        Pageable pageable = PageRequest.of(page, size);
+        TimeOffRequestFilterDTO filterDTO = new TimeOffRequestFilterDTO(null, name, null, null, null, null, null);
 
 
-        List<TimeOffRequest> foundRequests = timeOffRequestService.findRequestsByExample(page, size, sortBy, "", null, name, null, null, null, null, null).getContent();
+        List<TimeOffRequest> foundRequests = timeOffRequestService.findRequestsByExample(pageable, filterDTO).getContent();
 
 
         assertThat(foundRequests).containsExactlyInAnyOrder(request1, request3);

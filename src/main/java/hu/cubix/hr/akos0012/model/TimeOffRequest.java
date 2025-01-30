@@ -36,7 +36,6 @@ public class TimeOffRequest {
 
     public TimeOffRequest(Employee employee, LocalDateTime startDate, LocalDateTime endDate) {
         this.employee = employee;
-        this.manager = employee.getManager();
         this.startDate = startDate;
         this.endDate = endDate;
         this.requestStatus = RequestStatus.PENDING;
@@ -44,8 +43,8 @@ public class TimeOffRequest {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void judge(RequestStatus status) {
-        //setManager(manager);
+    public void judge(RequestStatus status, Employee manager) {
+        setManager(manager);
         setRequestStatus(status);
         setUpdatedAt(LocalDateTime.now());
     }

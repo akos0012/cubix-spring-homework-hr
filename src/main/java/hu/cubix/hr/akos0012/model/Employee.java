@@ -3,6 +3,8 @@ package hu.cubix.hr.akos0012.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -33,6 +35,9 @@ public class Employee {
     @ManyToOne
     private Company company;
 
+    @OneToMany(mappedBy = "employee")
+    private List<TimeOffRequest> timeOffRequests;
+
     public Employee() {
     }
 
@@ -44,6 +49,7 @@ public class Employee {
         this.username = username;
         this.password = password;
         this.roles = Set.of("user");
+        this.timeOffRequests = new ArrayList<>();
     }
 
     public Employee(String name, int salary, LocalDateTime dateOfStartWork, String username, String password) {
@@ -53,6 +59,11 @@ public class Employee {
         this.username = username;
         this.password = password;
         this.roles = Set.of("user");
+        this.timeOffRequests = new ArrayList<>();
+    }
+
+    public void addTimeOfRequest(TimeOffRequest timeOffRequest) {
+        this.timeOffRequests.add(timeOffRequest);
     }
 
     public long getId() {
@@ -133,6 +144,14 @@ public class Employee {
 
     public void setRoles(Set<String> roles) {
         this.roles = roles;
+    }
+
+    public List<TimeOffRequest> getTimeOffRequests() {
+        return timeOffRequests;
+    }
+
+    public void setTimeOffRequests(List<TimeOffRequest> timeOffRequests) {
+        this.timeOffRequests = timeOffRequests;
     }
 
     @Override

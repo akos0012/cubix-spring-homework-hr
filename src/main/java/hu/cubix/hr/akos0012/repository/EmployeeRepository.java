@@ -16,13 +16,14 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSp
 
     Optional<Employee> findByUsername(String username);
 
-    List<Employee> findByPositionName(String positionName);
 
-    List<Employee> findBySalaryIsGreaterThan(int salary);
-
-    List<Employee> findByNameStartingWithIgnoreCase(String name);
-
-    List<Employee> findByDateOfStartWorkBetween(LocalDateTime startDate, LocalDateTime endDate);
+    @Query("SELECT DISTINCT e FROM Employee e " +
+            "LEFT JOIN e.position p " +
+            "WHERE (:salary IS NULL OR e.salary >= :salary)" +
+            "AND (:job IS NULL OR p.name = :job)" +
+            "AND (:name IS NULL OR e.name LIKE :name%)" +
+            "AND ((CAST(:startDate AS timestamp) IS NULL OR CAST(:endDate AS timestamp ) IS NULL) OR e.dateOfStartWork BETWEEN :startDate AND :endDate)")
+    List<Employee> findAll(Integer salary, String job, String name, LocalDateTime startDate, LocalDateTime endDate);
 
     @Modifying
     @Query("UPDATE Employee e SET e.salary = :minSalary WHERE e.company.id = :companyID AND e.position.name = :positionName AND e.salary < :minSalary")

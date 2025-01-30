@@ -94,13 +94,11 @@ public class CompanyService {
         return result.stream().map(r -> new JobTitleSalaryDTO((String) r[0], (Double) r[1])).toList();
     }
 
-    public Page<Company> findCompaniesWithPaging(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<Company> findCompaniesWithPaging(Pageable pageable) {
         return companyRepository.findAll(pageable);
     }
 
-    public Page<Company> findFilteredCompanies(boolean full, Integer salary, Integer limit, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<Company> findFilteredCompanies(boolean full, Integer salary, Integer limit, Pageable pageable) {
         return full
                 ? companyRepository.findAllWithEmployees(salary, limit, pageable)
                 : companyRepository.findAllWithoutEmployees(salary, limit, pageable);

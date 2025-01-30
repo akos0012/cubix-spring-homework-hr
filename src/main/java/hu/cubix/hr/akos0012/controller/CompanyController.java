@@ -13,6 +13,8 @@ import hu.cubix.hr.akos0012.service.employee.SalaryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -42,26 +44,25 @@ public class CompanyController {
     //example url: http://localhost:8080/api/companies?full=true&salary=10000&limit=2
 
     @GetMapping
-    public Page<CompanyDTO> getAllCompanies(@RequestParam Optional<Boolean> full,
+    public List<CompanyDTO> getAllCompanies(@RequestParam Optional<Boolean> full,
                                             @RequestParam(required = false) Integer salary,
                                             @RequestParam(required = false) Integer limit,
-                                            @RequestParam(defaultValue = "0") int page,
-                                            @RequestParam(defaultValue = "10") int size) {
+                                            @SortDefault("id") Pageable pageable) {
 
-        Page<Company> companies = companyService.findFilteredCompanies(full.orElse(false), salary, limit, page, size);
+        List<Company> companies = companyService.findFilteredCompanies(full.orElse(false), salary, limit, pageable).getContent();
 
-        if (full.orElse(false)) return companyMapper.pagedCompanyToDto(companies);
-        else return companyMapper.pagedCompaniesToSummaryDtos(companies);
+        if (full.orElse(false)) return companyMapper.companiesToDtos(companies);
+        else return companyMapper.companiesToSummaryDtos(companies);
     }
 
     @GetMapping("/paged")
-    public Page<CompanyDTO> getPagedCompanies(@RequestParam int page, @RequestParam int size) {
-        Page<Company> pagedCompanies = companyService.findCompaniesWithPaging(page, size);
+    public List<CompanyDTO> getPagedCompanies(@SortDefault("id") Pageable pageable) {
+        Page<Company> pagedCompanies = companyService.findCompaniesWithPaging(pageable);
         System.out.println("Page number: " + pagedCompanies.getNumber());
         System.out.println("Total pages: " + pagedCompanies.getTotalPages());
         System.out.println("Total elements: " + pagedCompanies.getTotalElements());
         System.out.println("Number of elements: " + pagedCompanies.getNumberOfElements());
-        return companyMapper.pagedCompanyToDto(pagedCompanies);
+        return companyMapper.companiesToDtos(pagedCompanies.getContent());
     }
 
 
